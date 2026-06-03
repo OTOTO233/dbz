@@ -45,7 +45,7 @@
     "disableSWC": true
   },
   "appid": "wx7fe952b646b889e2",
-  "projectname": "quickstart-wx-cloud",
+  "projectname": "bazaar-db",
   "libVersion": "2.20.1",
   "cloudfunctionTemplateRoot": "cloudfunctionTemplate/",
   "condition": {

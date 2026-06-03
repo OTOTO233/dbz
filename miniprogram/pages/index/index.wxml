@@ -1,29 +1,137 @@
-<!--index.wxml-->
-<view class="container">
-  <view class="title">快速了解云开发</view>
-  <view class="top_tip">免鉴权接口调用 免部署后台 高并发</view>
-  <view class="power" wx:key="title" wx:for="{{powerList}}" wx:for-item="power">
-    <view class="power_info" data-index="{{index}}" data-type="{{ power.type }}" bindtap="onClickPowerInfo">
-      <view class="power_info_text">
-        <view class="power_info_text_title">
-          {{power.title}}
-          <view class="power_info_text_tag" wx:if="{{power.tag}}">{{power.tag}}</view>
-        </view>
-        <view class="power_info_text_tip">{{power.tip}}</view>
+<view class="page-shell">
+  <view class="hero">
+    <view class="hero-glow"></view>
+    <view class="hero-top">
+      <view>
+        <view class="eyebrow">THE BAZAAR DATABASE</view>
+        <view class="title">Bazaar DB</view>
       </view>
-      <image wx:if="{{!power.showItem && power.item.length}}" class="power_info_more" src="../../images/arrow.svg"></image>
-      <image wx:if="{{power.showItem && power.item.length}}" class="power_info_less" src="../../images/arrow.svg"></image>
-      <image wx:if="{{!power.item.length}}" class="power_item_icon" src="../../images/arrow.svg"></image>
+      <view class="patch">Patch {{patch}}</view>
     </view>
-    <view wx:if="{{power.showItem}}">
-      <view wx:key="title" wx:for="{{power.item}}">
-        <view class="line"></view>
-        <view class="power_item" bindtap="jumpPage" data-type="{{ item.type }}" data-page="{{item.page}}">
-          <view class="power_item_title">{{item.title}}</view>
-          <image class="power_item_icon" src="../../images/arrow.svg"></image>
-        </view>
+    <view class="subtitle">物品、技能、商人和事件的随身资料库。搜索名字、英雄、标签或效果，快速筛出你要的卡。</view>
+    <view class="search-row">
+      <view class="search-box">
+        <text class="search-icon">⌕</text>
+        <input value="{{keyword}}" placeholder="搜索 Cutlass / Haste / Vanessa" placeholder-class="placeholder" bindinput="onSearchInput" />
+      </view>
+      <button class="filter-button {{filterOpen ? 'active' : ''}}" bindtap="toggleFilterPanel">筛选</button>
+    </view>
+  </view>
+
+  <scroll-view scroll-x class="category-scroll" enhanced show-scrollbar="{{false}}">
+    <view class="category-row">
+      <view
+        wx:for="{{categories}}"
+        wx:key="id"
+        class="category-pill {{activeCategory === item.id ? 'active' : ''}}"
+        data-id="{{item.id}}"
+        bindtap="switchCategory"
+      >
+        <text>{{item.label}}</text>
+        <text class="category-count">{{item.count || item.localCount}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view wx:if="{{filterOpen}}" class="filter-panel">
+    <view class="filter-header">
+      <view>
+        <view class="filter-title">高级筛选</view>
+        <view class="filter-subtitle">按英雄、稀有度、尺寸和标签收窄列表</view>
+      </view>
+      <button class="clear-button" bindtap="clearFilters">重置</button>
+    </view>
+
+    <view class="filter-group">
+      <view class="filter-label">英雄</view>
+      <view class="chip-row">
+        <view wx:for="{{heroes}}" wx:key="*this" class="chip {{activeHero === item ? 'active' : ''}}" data-value="{{item}}" bindtap="selectHero">{{item}}</view>
+      </view>
+    </view>
+
+    <view class="filter-group">
+      <view class="filter-label">稀有度</view>
+      <view class="chip-row">
+        <view wx:for="{{tiers}}" wx:key="*this" class="chip tier-{{item}} {{activeTier === item ? 'active' : ''}}" data-value="{{item}}" bindtap="selectTier">{{item}}</view>
+      </view>
+    </view>
+
+    <view class="filter-group">
+      <view class="filter-label">尺寸</view>
+      <view class="chip-row">
+        <view wx:for="{{sizes}}" wx:key="*this" class="chip {{activeSize === item ? 'active' : ''}}" data-value="{{item}}" bindtap="selectSize">{{item}}</view>
+      </view>
+    </view>
+
+    <view class="filter-group">
+      <view class="filter-label">标签</view>
+      <view class="chip-row">
+        <view wx:for="{{tags}}" wx:key="*this" class="chip {{activeTag === item ? 'active' : ''}}" data-value="{{item}}" bindtap="selectTag">{{item}}</view>
       </view>
     </view>
   </view>
-  <cloud-tip-modal showTipProps="{{showTip}}" title="{{title}}" content="{{content}}"></cloud-tip-modal>
+
+  <view class="result-bar">
+    <view>
+      <text class="result-number">{{filteredCards.length}}</text>
+      <text class="result-text"> 条结果</text>
+    </view>
+    <view class="source-note">本地样例数据，可接云函数同步</view>
+  </view>
+
+  <view class="card-list">
+    <view wx:for="{{filteredCards}}" wx:key="id" class="card" data-id="{{item.id}}" bindtap="openCard">
+      <view class="card-rune" style="background: {{item.accent}};">
+        <text>{{item.initial}}</text>
+      </view>
+      <view class="card-body">
+        <view class="card-head">
+          <view>
+            <view class="card-name">{{item.name}}</view>
+            <view class="card-meta">{{item.meta}}</view>
+          </view>
+          <view wx:if="{{item.cooldown}}" class="cooldown">{{item.cooldown}}</view>
+        </view>
+        <view class="tag-row">
+          <text wx:for="{{item.tags}}" wx:key="*this" class="tag">{{item}}</text>
+        </view>
+        <view class="effect">{{item.effect}}</view>
+        <view class="source">{{item.source}}</view>
+      </view>
+    </view>
+
+    <view wx:if="{{!filteredCards.length}}" class="empty">
+      <view class="empty-title">没有匹配的卡</view>
+      <view class="empty-text">试试清空筛选，或者搜索英雄、标签、效果关键词。</view>
+      <button class="empty-button" bindtap="clearFilters">清空筛选</button>
+    </view>
+  </view>
+
+  <view wx:if="{{selectedCard}}" class="modal-mask" bindtap="closeCard">
+    <view class="modal" catchtap="noop">
+      <view class="modal-accent" style="background: {{selectedCard.accent}};"></view>
+      <view class="modal-header">
+        <view>
+          <view class="modal-title">{{selectedCard.name}}</view>
+          <view class="modal-meta">{{selectedCard.meta}}</view>
+        </view>
+        <button class="close-button" bindtap="closeCard">×</button>
+      </view>
+      <view class="modal-tags">
+        <text wx:for="{{selectedCard.tags}}" wx:key="*this" class="tag">{{item}}</text>
+      </view>
+      <view class="detail-section">
+        <view class="detail-label">效果</view>
+        <view class="detail-text">{{selectedCard.effect}}</view>
+      </view>
+      <view class="detail-section">
+        <view class="detail-label">来源</view>
+        <view class="detail-text">{{selectedCard.source}}</view>
+      </view>
+      <view class="detail-section">
+        <view class="detail-label">附魔 / 备注</view>
+        <view wx:for="{{selectedCard.notes}}" wx:key="*this" class="note-line">{{item}}</view>
+      </view>
+    </view>
+  </view>
 </view>
