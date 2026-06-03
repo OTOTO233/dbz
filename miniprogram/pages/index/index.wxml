@@ -56,8 +56,8 @@
       </view>
     </view>
 
-    <view class="filter-group">
-        <view wx:if="{{sizes.length}}" class="filter-label">尺寸</view>
+    <view wx:if="{{sizes.length}}" class="filter-group">
+      <view class="filter-label">尺寸</view>
       <view class="chip-row">
         <view wx:for="{{sizes}}" wx:key="*this" class="chip {{activeSize === item ? 'active' : ''}}" data-value="{{item}}" bindtap="selectSize">{{item}}</view>
       </view>
@@ -96,10 +96,17 @@
           <view wx:if="{{item.cooldown}}" class="cooldown">{{item.cooldown}}</view>
         </view>
         <view class="tag-row">
+          <text class="tier-badge tier-{{item.tierClass}}">{{item.tier}}</text>
           <text wx:for="{{item.tags}}" wx:key="*this" class="tag">{{item}}</text>
         </view>
+        <view wx:if="{{item.mechanics.length}}" class="mechanic-row">
+          <text wx:for="{{item.mechanics}}" wx:key="key" class="mechanic mechanic-{{item.key}}">{{item.label}}</text>
+        </view>
         <view class="effect">{{item.effect}}</view>
-        <view class="source">{{item.source}}</view>
+        <view wx:if="{{item.sourceList.length}}" class="source-row">
+          <text class="source-label">来源</text>
+          <text wx:for="{{item.sourceList}}" wx:key="name" class="source-chip">{{item.name}} {{item.day}}</text>
+        </view>
       </view>
     </view>
 
@@ -114,27 +121,53 @@
     <view class="modal" catchtap="noop">
       <view class="modal-accent" style="background: {{selectedCard.accent}};"></view>
       <view class="modal-header">
-        <image wx:if="{{selectedCard.imageLarge || selectedCard.image}}" class="modal-art" src="{{selectedCard.imageLarge || selectedCard.image}}" mode="aspectFit"></image>
-        <view>
+        <image wx:if="{{selectedCard.detailImage}}" class="modal-art" src="{{selectedCard.detailImage}}" mode="aspectFit"></image>
+        <view class="modal-title-block">
           <view class="modal-title">{{selectedCard.name}}</view>
           <view class="modal-meta">{{selectedCard.meta}}</view>
+          <view class="tag-row modal-title-tags">
+            <text class="tier-badge tier-{{selectedCard.tierClass}}">{{selectedCard.tier}}</text>
+            <text wx:for="{{selectedCard.tags}}" wx:key="*this" class="tag">{{item}}</text>
+          </view>
         </view>
         <button class="close-button" bindtap="closeCard">×</button>
       </view>
-      <view class="modal-tags">
-        <text wx:for="{{selectedCard.tags}}" wx:key="*this" class="tag">{{item}}</text>
+
+      <view wx:if="{{selectedCard.mechanics.length}}" class="mechanic-row modal-mechanics">
+        <text wx:for="{{selectedCard.mechanics}}" wx:key="key" class="mechanic mechanic-{{item.key}}">{{item.label}}</text>
       </view>
+
+      <view class="detail-grid">
+        <view class="detail-cell">
+          <view class="detail-label">英雄</view>
+          <view class="detail-value">{{selectedCard.hero}}</view>
+        </view>
+        <view class="detail-cell">
+          <view class="detail-label">分类</view>
+          <view class="detail-value">{{selectedCard.categoryLabel}}</view>
+        </view>
+        <view wx:if="{{selectedCard.cooldown}}" class="detail-cell">
+          <view class="detail-label">冷却</view>
+          <view class="detail-value">{{selectedCard.cooldown}}</view>
+        </view>
+      </view>
+
       <view class="detail-section">
         <view class="detail-label">效果</view>
         <view class="detail-text">{{selectedCard.effect}}</view>
       </view>
-      <view class="detail-section">
-        <view class="detail-label">来源</view>
-        <view class="detail-text">{{selectedCard.source}}</view>
+      <view wx:if="{{selectedCard.sourceList.length}}" class="detail-section">
+        <view class="detail-label">获取来源</view>
+        <view class="source-list">
+          <view wx:for="{{selectedCard.sourceList}}" wx:key="name" class="source-card">
+            <text class="source-card-name">{{item.name}}</text>
+            <text class="source-card-day">{{item.day}}</text>
+          </view>
+        </view>
       </view>
       <view class="detail-section">
-        <view class="detail-label">附魔 / 备注</view>
-        <view wx:for="{{selectedCard.notes}}" wx:key="*this" class="note-line">{{item}}</view>
+        <view class="detail-label">源站</view>
+        <view class="detail-text link-text">{{selectedCard.url}}</view>
       </view>
     </view>
   </view>

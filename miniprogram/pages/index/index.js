@@ -5,7 +5,7 @@ function includesText(value, keyword) {
 }
 
 function enrichCard(card) {
-  const metaParts = [card.hero, card.tier];
+  const metaParts = [card.hero, card.categoryLabel];
   if (card.size) {
     metaParts.push(card.size);
   }
@@ -48,7 +48,7 @@ Page({
       if (category.id === "all") {
         return {
           ...category,
-        count: cards.length,
+          count: cards.length,
         };
       }
       const localCount = cards.filter((card) => card.category === category.id).length;
@@ -141,7 +141,7 @@ Page({
         includesText(card.hero, keyword) ||
         includesText(card.tier, keyword) ||
         includesText(card.effect, keyword) ||
-        includesText(card.rawText, keyword) ||
+        (card.sourceList || []).some((source) => includesText(source.name, keyword) || includesText(source.day, keyword)) ||
         card.tags.some((tag) => includesText(tag, keyword));
 
       return matchCategory && matchHero && matchTier && matchSize && matchTag && matchKeyword;
