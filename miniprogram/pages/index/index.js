@@ -13,6 +13,10 @@ function enrichCard(card) {
     ...card,
     initial: card.name.slice(0, 1),
     meta: metaParts.join(" · "),
+    detailLines: card.detailLines || [],
+    mechanics: card.mechanics || [],
+    sourceList: card.sourceList || [],
+    tags: card.tags || [],
   };
 }
 
@@ -159,6 +163,8 @@ Page({
   closeCard() {
     this.setData({ selectedCard: null });
   },
+
+  preventTouchMove() {},
 
   noop() {},
 });

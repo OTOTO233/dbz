@@ -540,12 +540,18 @@ button {
   display: flex;
   align-items: flex-end;
   padding: 24rpx;
-  background: rgba(0, 0, 0, 0.58);
   box-sizing: border-box;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.58);
 }
 
 .modal {
   position: relative;
+  z-index: 1;
   overflow-y: auto;
   width: 100%;
   max-height: 82vh;

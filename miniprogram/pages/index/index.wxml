@@ -117,11 +117,12 @@
     </view>
   </view>
 
-  <view wx:if="{{selectedCard}}" class="modal-mask" bindtap="closeCard">
-    <view class="modal" catchtap="noop">
+  <view wx:if="{{selectedCard}}" class="modal-mask">
+    <view class="modal-backdrop" bindtap="closeCard" catchtouchmove="preventTouchMove"></view>
+    <scroll-view scroll-y class="modal" catchtap="noop">
       <view class="modal-accent" style="background: {{selectedCard.accent}};"></view>
       <view class="modal-header">
-        <image wx:if="{{selectedCard.detailImage}}" class="modal-art" src="{{selectedCard.detailImage}}" mode="aspectFit"></image>
+        <image wx:if="{{selectedCard.image}}" class="modal-art" src="{{selectedCard.image}}" mode="aspectFit"></image>
         <view class="modal-title-block">
           <view class="modal-title">{{selectedCard.name}}</view>
           <view class="modal-meta">{{selectedCard.meta}}</view>
@@ -156,6 +157,10 @@
         <view class="detail-label">效果</view>
         <view class="detail-text">{{selectedCard.effect}}</view>
       </view>
+      <view wx:if="{{selectedCard.detailLines.length}}" class="detail-section">
+        <view class="detail-label">详情</view>
+        <view wx:for="{{selectedCard.detailLines}}" wx:key="*this" class="note-line">{{item}}</view>
+      </view>
       <view wx:if="{{selectedCard.sourceList.length}}" class="detail-section">
         <view class="detail-label">获取来源</view>
         <view class="source-list">
@@ -169,6 +174,6 @@
         <view class="detail-label">源站</view>
         <view class="detail-text link-text">{{selectedCard.url}}</view>
       </view>
-    </view>
+    </scroll-view>
   </view>
 </view>
