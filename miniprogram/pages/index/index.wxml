@@ -57,7 +57,7 @@
     </view>
 
     <view class="filter-group">
-      <view class="filter-label">尺寸</view>
+        <view wx:if="{{sizes.length}}" class="filter-label">尺寸</view>
       <view class="chip-row">
         <view wx:for="{{sizes}}" wx:key="*this" class="chip {{activeSize === item ? 'active' : ''}}" data-value="{{item}}" bindtap="selectSize">{{item}}</view>
       </view>
@@ -76,12 +76,15 @@
       <text class="result-number">{{filteredCards.length}}</text>
       <text class="result-text"> 条结果</text>
     </view>
-    <view class="source-note">本地样例数据，可接云函数同步</view>
+    <view class="source-note">中文数据 · 含远程图片</view>
   </view>
 
   <view class="card-list">
     <view wx:for="{{filteredCards}}" wx:key="id" class="card" data-id="{{item.id}}" bindtap="openCard">
-      <view class="card-rune" style="background: {{item.accent}};">
+      <view wx:if="{{item.image}}" class="card-art-wrap">
+        <image class="card-art" src="{{item.image}}" mode="aspectFit" lazy-load="true"></image>
+      </view>
+      <view wx:else class="card-rune" style="background: {{item.accent}};">
         <text>{{item.initial}}</text>
       </view>
       <view class="card-body">
@@ -111,6 +114,7 @@
     <view class="modal" catchtap="noop">
       <view class="modal-accent" style="background: {{selectedCard.accent}};"></view>
       <view class="modal-header">
+        <image wx:if="{{selectedCard.imageLarge || selectedCard.image}}" class="modal-art" src="{{selectedCard.imageLarge || selectedCard.image}}" mode="aspectFit"></image>
         <view>
           <view class="modal-title">{{selectedCard.name}}</view>
           <view class="modal-meta">{{selectedCard.meta}}</view>

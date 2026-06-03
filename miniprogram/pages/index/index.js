@@ -128,7 +128,10 @@ Page({
     const keyword = this.data.keyword.trim().toLowerCase();
     const filteredCards = cards.filter((card) => {
       const matchCategory = this.data.activeCategory === "all" || card.category === this.data.activeCategory;
-      const matchHero = !this.data.activeHero || card.hero === this.data.activeHero;
+      const matchHero =
+        !this.data.activeHero ||
+        card.hero === this.data.activeHero ||
+        (card.heroes || []).includes(this.data.activeHero);
       const matchTier = !this.data.activeTier || card.tier === this.data.activeTier;
       const matchSize = !this.data.activeSize || card.size === this.data.activeSize;
       const matchTag = !this.data.activeTag || card.tags.includes(this.data.activeTag);
@@ -138,6 +141,7 @@ Page({
         includesText(card.hero, keyword) ||
         includesText(card.tier, keyword) ||
         includesText(card.effect, keyword) ||
+        includesText(card.rawText, keyword) ||
         card.tags.some((tag) => includesText(tag, keyword));
 
       return matchCategory && matchHero && matchTier && matchSize && matchTag && matchKeyword;
